@@ -30,7 +30,6 @@ var chartGroup = svg.append("g")
 // Load data from data.csv
 d3.csv("./assets/data/data.csv").then(function(stateData, err) {
     // Log an error if one exists
-    // if (error) return console.warn(error)
     if (err) throw err;
 
     // Parse data
@@ -49,7 +48,7 @@ d3.csv("./assets/data/data.csv").then(function(stateData, err) {
         .domain([4, d3.max(stateData, d => d.healthcare)])
         .range([height, 0]);
 
-    // Create Axes
+    // Create Initial Axes functions
 
     var bottomAxis = d3.axisBottom(xScale);
     var leftAxis = d3.axisLeft(yLinearScale);
@@ -66,6 +65,19 @@ d3.csv("./assets/data/data.csv").then(function(stateData, err) {
     chartGroup.append("g")
         .call(leftAxis);
 
+    chartGroup.append("text")
+        .attr("transform", `translate(${width / 3}, ${height + margin.top + 20})`)
+        .text("Percentage of Population in Poverty");
+
+    // Create axes labels
+    chartGroup.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left + 40)
+        .attr("x", 0 - (height / 1.2))
+        .attr("dy", "1em")
+        .attr("class", "axisText")
+        .text("Percentage of Population that Lacks Healthcare");
+
     // Create Circles
     var circlesGroup = chartGroup.selectAll("circle")
         .data(stateData)
@@ -76,9 +88,9 @@ d3.csv("./assets/data/data.csv").then(function(stateData, err) {
         .attr("r", 15)
         .attr("class", function(d) {
             return "stateCircle " + d.abbr;
-        })
-        .attr("fill", "purple")
-        .attr("opacity", ".8")
+        });
+    // .attr("fill", "purple")
+    // .attr("opacity", ".8")
 
     var toolTip = d3.tip()
         .attr("class", "tooltip")
@@ -98,22 +110,4 @@ d3.csv("./assets/data/data.csv").then(function(stateData, err) {
         .on("mouseout", function(data, index) {
             toolTip.hide(data);
         });
-
-
-
-
-    chartGroup.append("text")
-        .attr("transform", `translate(${width / 3}, ${height + margin.top + 20})`)
-        .text("Percentage of Population in Poverty");
-
-    // Create axes labels
-    chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin.left + 40)
-        .attr("x", 0 - (height / 1.2))
-        .attr("dy", "1em")
-        .attr("class", "axisText")
-        .text("Percentage of Population that Lacks healthcare");
-
-
 });
